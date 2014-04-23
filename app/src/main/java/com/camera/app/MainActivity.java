@@ -59,6 +59,15 @@ public class MainActivity extends Activity {
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.addView(mPreview);
 
+            preview.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mCamera.autoFocus(mAutoFocusCallback);
+                    }
+                }
+            );
+
             Button captureButton = (Button) findViewById(R.id.button_capture);
             captureButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -102,6 +111,11 @@ public class MainActivity extends Activity {
 
         return mediaFile;
     }
+
+    private Camera.AutoFocusCallback mAutoFocusCallback = new Camera.AutoFocusCallback(){
+        @Override
+        public void onAutoFocus(boolean arg0, Camera arg1) {}
+    };
 
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
         @Override
