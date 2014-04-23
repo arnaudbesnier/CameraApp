@@ -1,5 +1,5 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
@@ -7,9 +7,7 @@
         android:id="@+id/camera_preview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
-        />
-
+        android:layout_weight="1"/>
     <Button
         android:id="@+id/button_capture"
         android:text="Capture"
@@ -17,4 +15,4 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         />
-</LinearLayout>
+</RelativeLayout>
