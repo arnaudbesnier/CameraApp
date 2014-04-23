@@ -74,7 +74,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(getApplicationContext(), "Take picture", Toast.LENGTH_SHORT).show();
-                        mCamera.takePicture(null, null, mPicture);
+                        mCamera.takePicture(mShutterCallback, null, mPicture);
                     }
                 }
             );
@@ -115,6 +115,11 @@ public class MainActivity extends Activity {
     private Camera.AutoFocusCallback mAutoFocusCallback = new Camera.AutoFocusCallback(){
         @Override
         public void onAutoFocus(boolean arg0, Camera arg1) {}
+    };
+
+    private Camera.ShutterCallback mShutterCallback = new Camera.ShutterCallback(){
+        @Override
+        public void onShutter() {}
     };
 
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
