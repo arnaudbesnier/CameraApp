@@ -1,37 +1,50 @@
 package com.camera.app;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.FrameLayout;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends Activity {
+
+    private Camera mCamera;
+    private CameraPreview mPreview;
+
+    private boolean checkCameraHardware(Context context) {
+         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+             return true;
+         } else {
+             return false;
+         }
+    }
+
+    public static Camera getCameraInstance(){
+        Camera camera = null;
+        try {
+            camera = Camera.open();
+        }
+        catch (Exception e) {
+            // Camera is not available (in use or does not exist)
+        }
+        return camera;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
+        if (checkCameraHardware(this)) {
+            // Create an instance of Camera
+            mCamera = getCameraInstance();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+            // Create our Preview view and set it as the content of our activity.
+            mPreview = new CameraPreview(this, mCamera);
+            FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+            preview.addView(mPreview);
         }
-        return super.onOptionsItemSelected(item);
     }
-
 }
