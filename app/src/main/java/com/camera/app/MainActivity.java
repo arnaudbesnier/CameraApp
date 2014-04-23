@@ -92,6 +92,31 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (mCamera != null) {
+            mCamera.setPreviewCallback(null);
+            mPreview.getHolder().removeCallback(mPreview);
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mCamera == null) {
+            mCamera = getCameraInstance();
+            mPreview = new CameraPreview(this, mCamera);
+
+            FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+            preview.addView(mPreview);
+        }
+    }
+
     private static File getOutputMediaFile(int type){
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CameraApp");
 
