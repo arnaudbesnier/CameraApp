@@ -3,8 +3,10 @@ package com.camera.app;
 import android.content.Context;
 import android.hardware.Camera;
 import android.util.Log;
+import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 
 import java.io.IOException;
 
@@ -14,10 +16,30 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     private SurfaceHolder mHolder;
     private Camera mCamera;
+    private int mPreviewHeight;
+    private int mPreviewWidth;
 
     public CameraPreview(Context context, Camera camera) {
         super(context);
         mCamera = camera;
+
+        // Screen ratio
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Float screenRation = (float) display.getHeight() / (float) display.getWidth();
+        Log.d(TAG, "Screen Size: "  + display.getHeight() + "x" +  display.getWidth());
+        Log.d(TAG, "Screen Ratio: " + screenRation);
+
+        // Picture ratio
+        Camera.Parameters parameters;
+        parameters = mCamera.getParameters();
+        Camera.Size pictureSize = parameters.getPictureSize();
+        Float pictureRatio = (float) pictureSize.width / (float) pictureSize.height;
+        Log.d(TAG, "Picture Size: "  + pictureSize.width + "x" +  pictureSize.height);
+        Log.d(TAG, "Picture Ratio: " + pictureRatio);
+
+        mPreviewWidth = display.getWidth();
+        mPreviewHeight = (int) (pictureRatio * mPreviewWidth);
 
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
@@ -25,6 +47,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mHolder.addCallback(this);
         // deprecated setting, but required on Android versions prior to 3.0
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+    }
+
+    @Override
+    public void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        if (changed) {
+            (this).layout(0, 0, mPreviewWidth, mPreviewHeight);
+        }
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
