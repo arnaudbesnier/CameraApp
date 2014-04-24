@@ -64,6 +64,25 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         return optimalSize;
     }
 
+    private static Camera.Size getOptimalPictureSize(List<Camera.Size> sizes)
+    {
+        if (sizes == null) {
+            return null;
+        }
+        Camera.Size optimalSize = null;
+
+        long resolution = 0;
+
+        for (Camera.Size size : sizes) {
+            if (size.width * size.height > resolution) {
+                optimalSize = size;
+                resolution = size.width * size.height;
+            }
+        }
+
+        return optimalSize;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
@@ -82,6 +101,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             parameters.set("orientation", "portrait");
             parameters.setRotation(90);
             parameters.setPreviewSize(mOptimalPreviewSize.width, mOptimalPreviewSize.height);
+
+            List<Camera.Size> pictSizes = parameters.getSupportedPictureSizes();
+            Camera.Size pictureSize = getOptimalPictureSize(pictSizes);
+            if (pictureSize != null) {
+                parameters.setPictureSize(pictureSize.width, pictureSize.height);
+            }
             mCamera.setParameters(parameters);
 
             mCamera.setDisplayOrientation(90);
