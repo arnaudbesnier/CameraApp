@@ -102,6 +102,9 @@ public class MainActivity extends Activity {
             mCamera.release();
             mCamera = null;
         }
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        preview.removeView(mPreview);
+        mPreview = null;
     }
 
     @Override
