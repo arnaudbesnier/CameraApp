@@ -20,6 +20,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private int mPreviewHeight;
     private int mPreviewWidth;
 
+    private int mToolbarHeight;
+
     public CameraPreview(Context context, Camera camera) {
         super(context);
         mCamera = camera;
@@ -41,6 +43,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         mPreviewWidth = display.getWidth();
         mPreviewHeight = (int) (pictureRatio * mPreviewWidth);
+        mToolbarHeight = display.getHeight() - mPreviewHeight;
+        Log.d(TAG, "Toolbar height: " + mToolbarHeight);
 
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
