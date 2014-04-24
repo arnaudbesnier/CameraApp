@@ -34,8 +34,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
         final double ASPECT_TOLERANCE = 0.1;
+        final double MAX_DOWNSIZE = 1.5;
         double targetRatio = (double)h / w;
-
         if (sizes == null) return null;
 
         Camera.Size optimalSize = null;
@@ -45,6 +45,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         for (Camera.Size size : sizes) {
             double ratio = (double) size.width / size.height;
+            double downsize = (double) size.width / w;
+            if (downsize > MAX_DOWNSIZE) {
+                //if the preview is a lot larger than our display surface ignore it
+                //reason - on some phones there is not enough heap available to show the larger preview sizes
+                continue;
+            }
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
             if (Math.abs(size.height - targetHeight) < minDiff) {
                 optimalSize = size;
@@ -52,6 +58,20 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             }
         }
 
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
+            for (Camera.Size size : sizes) {
+                double downsize = (double) size.width / w;
+                if (downsize > MAX_DOWNSIZE) {
+                    continue;
+                }
+                if (Math.abs(size.height - targetHeight) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - targetHeight);
+                }
+            }
+        }
+        //everything else failed, just take the closest match
         if (optimalSize == null) {
             minDiff = Double.MAX_VALUE;
             for (Camera.Size size : sizes) {
